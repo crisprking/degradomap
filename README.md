@@ -88,7 +88,7 @@ MIT. See LICENSE.
 
 ## About the author
 
-[PLACEHOLDER -- fill in your background and motivation]
+Abraham Trueba (UC Berkeley). I work on computational biology and drug discovery, with a focus on what public data can and cannot tell us about protein tractability for targeted protein degradation.
 
 This work uses public data from UniProt, AlphaFold DB (EMBL-EBI), and DepMap
 (Broad Institute). Cite their primary publications when using their data.

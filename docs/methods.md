@@ -1,7 +1,5 @@
 # degradomap: methods note
 
-**Status:** Draft. Sections marked [PLACEHOLDER] are for the author to complete.
-
 **Author:** Abraham Trueba
 
 **Date:** April 2026
@@ -155,3 +153,7 @@ Jumper, J. et al. (2021). Highly accurate protein structure prediction with Alph
 Tsherniak, A. et al. (2017). Defining a cancer dependency map. *Cell*, 170, 564-576.
 
 Tien, M. Z., Meyer, A. G., Sydykova, D. K., Spielman, S. J., & Wilke, C. O. (2013). Maximum allowed solvent accessibilities of residues in proteins. *PLoS One*, 8, e80635.
+
+## Code and data availability
+
+All code, data, and figures are available at https://github.com/crisprking/degradomap. The pipeline is reproducible end-to-end via the included CLI.
