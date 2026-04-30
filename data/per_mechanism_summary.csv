@@ -1,0 +1,4 @@
+mechanism_class,n_positives,n_negatives,auc_loo_cv,median_positive_rank,n_evaluable,positive_genes,positive_ranks
+pocket_binder,6,814,0.6852989352989353,197.5,820,"BIRC2,VHL,BIRC3,XIAP,MDM2,KEAP1","22,147,156,239,309,685"
+molecular_glue,2,814,0.6302211302211301,302.5,816,"CRBN,DCAF15","221,384"
+covalent,4,814,0.2291154791154791,637.0,818,"FEM1B,RNF4,DCAF1,RNF114","469,588,686,777"
