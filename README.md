@@ -42,7 +42,7 @@ This repository is most useful as:
 Tested with Python 3.10 to 3.12. Requires ~1 GB of disk for AlphaFold structures
 and DepMap matrices.
 
-    git clone https://github.com/USERNAME/degradomap.git
+    git clone https://github.com/crisprking/degradomap.git
     cd degradomap
     pip install -e .
 
@@ -78,9 +78,9 @@ versus narrowly expressed.
 
 ## Citation
 
-[YOUR NAME]. (2026). degradomap: empirical evaluation of public-data features
+Trueba, A. (2026). degradomap: empirical evaluation of public-data features
 for predicting PROTAC E3 ligase tractability.
-https://github.com/USERNAME/degradomap
+https://github.com/crisprking/degradomap
 
 ## License
 

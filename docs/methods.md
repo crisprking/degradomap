@@ -2,9 +2,9 @@
 
 **Status:** Draft. Sections marked [PLACEHOLDER] are for the author to complete.
 
-**Author:** [PLACEHOLDER]
+**Author:** Abraham Trueba
 
-**Date:** [PLACEHOLDER]
+**Date:** April 2026
 
 ## Abstract
 
@@ -22,8 +22,7 @@ tractability.
 
 ## Introduction
 
-[PLACEHOLDER -- your motivation paragraph: why you cared about this question,
-your background, how it connects to your work or interests. 1-2 paragraphs.]
+I came to this question through training in chemical biology (UC Berkeley) and bioinformatics. PROTAC E3 selection is the bottleneck of the field — the chemistry community has expanded the warhead toolkit dramatically, but we still rely on a handful of E3 ligases (CRBN, VHL) for almost all published degraders. I wanted to test whether public data — AlphaFold structures, DepMap functional genomics — could rank the unexploited E3s in a way that would help triage which ones are worth pursuing. The answer turned out to be more nuanced than yes or no, which is the subject of this and follow-up posts.
 
 The human ubiquitin-proteasome system contains hundreds of E3 ligases, yet
 PROTACs and molecular glues to date have engaged a small minority. Fewer than
@@ -136,9 +135,9 @@ substrate-adapter function.
 
 ## Discussion
 
-[PLACEHOLDER -- your interpretation: what you make of this null result, what
-you would do differently if starting over, what this means for the field's
-ongoing efforts to expand the PROTAC E3 toolkit. 2-3 paragraphs.]
+The most defensible interpretation of the v1 null result is that structural and functional-genomics features alone capture the protein side of PROTAC tractability but miss the chemistry side entirely. CRBN is not predictable from its structure or its DepMap profile; it is predictable from the historical fact that thalidomide was found to bind it. ChEMBL ligandability features (number of distinct scaffolds, best Kd, presence of co-crystal structures) are the obvious next addition.
+
+A subsequent analysis (see follow-up posts) showed that splitting the 12 positives by binding mechanism — pocket binders, molecular glues, covalent — recovers signal that the pooled model erased. External validation against post-2024 PROTAC E3s confirmed the pocket-binder model partially generalizes, with a clear failure mode on Kelch β-propeller folds. These follow-up findings are documented in subsequent commits and writeups.
 
 The principal limitation is the small positive set (n=12, mechanistically
 heterogeneous). A second limitation is the absence of warhead-side features.
@@ -149,4 +148,10 @@ require ChEMBL ligand-binding curation we did not perform here.
 
 ## References
 
-[PLACEHOLDER -- fill in based on what you actually cite.]
+Bekes, M., Langley, D. R., & Crews, C. M. (2022). PROTAC targeted protein degraders: the past is prologue. *Nat Rev Drug Discov*, 21, 181-200.
+
+Jumper, J. et al. (2021). Highly accurate protein structure prediction with AlphaFold. *Nature*, 596, 583-589.
+
+Tsherniak, A. et al. (2017). Defining a cancer dependency map. *Cell*, 170, 564-576.
+
+Tien, M. Z., Meyer, A. G., Sydykova, D. K., Spielman, S. J., & Wilke, C. O. (2013). Maximum allowed solvent accessibilities of residues in proteins. *PLoS One*, 8, e80635.
