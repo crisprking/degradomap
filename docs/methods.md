@@ -157,3 +157,122 @@ Tien, M. Z., Meyer, A. G., Sydykova, D. K., Spielman, S. J., & Wilke, C. O. (201
 ## Code and data availability
 
 All code, data, and figures are available at https://github.com/crisprking/degradomap. The pipeline is reproducible end-to-end via the included CLI.
+
+---
+
+## §4 — v2: Mechanism-stratified analysis
+
+**Pre-registered:** Yes (see docs/preregistrations/v2.md)
+
+### Motivation
+
+The v1 positive set is mechanistically heterogeneous: pocket binders (VHL, MDM2, KEAP1, XIAP/BIRC2/BIRC3), molecular glues (CRBN, DCAF15, DCAF16), and covalent binders (RNF4, RNF114, FEM1B, DCAF1). Pooling these into one positive class erases structure-function relationships.
+
+### Classification
+
+| Mechanism | Members |
+|-----------|---------|
+| pocket_binder | VHL, MDM2, KEAP1, XIAP, BIRC2, BIRC3 |
+| molecular_glue | CRBN, DCAF15, DCAF16 |
+| covalent | RNF4, RNF114, FEM1B, DCAF1 |
+
+### Results
+
+All three mechanism-specific experiments failed to produce better-than-chance discrimination. The pocket-binder sub-experiment showed the weakest signal (LOO AUC ~0.54); the covalent sub-experiment showed the strongest but still non-significant result (LOO AUC ~0.61). Permutation testing confirmed all results are consistent with chance.
+
+---
+
+## §5 — v3: External held-out validation
+
+**Pre-registered:** Yes (see docs/preregistrations/v3.md)
+
+Five PROTAC E3s published after data collection were held out and scored by the v1 model without retraining:
+
+| Gene | Year | Mechanism | Rank | Pass? |
+|------|------|-----------|------|-------|
+| DCAF11 | 2024 | covalent | ~350 | No |
+| RNF126 | 2024 | covalent | ~280 | Partial |
+| FBXO22 | 2024 | covalent | ~420 | No |
+| TRIM21 | 2023 | pocket | ~190 | Yes |
+| STUB1 | 2023 | pocket | ~210 | Yes |
+
+Pocket binders generalize weakly; covalent binders do not. Confirms v1 null with mechanism-specific detail.
+
+---
+
+## §6 — v4: Propeller-fold features (failed approach)
+
+**Pre-registered:** Yes (see docs/preregistrations/v4.md)
+
+### Motivation
+
+DCAF11, a newly validated covalent PROTAC E3, is a WD40 β-propeller. Our existing structural features (compactness, hydrophobic patches, pocket clusters) are not informative for propeller folds, which lack deep druggable pockets but present shallow surface pockets on the top face.
+
+### Approach
+
+Added 4 propeller-fold-specific features: propeller_score (HHsearch against β-propeller SCOP family), top_face_hydrophobicity, top_face_cleft_depth, propeller_cys_proximity. All computed from AlphaFold structures.
+
+### Result
+
+**Catastrophic failure.** The propeller features caused the model to rank all WD40 propeller proteins highly (~800 proteins), generating massive false positives. DCAF11 LOO rank improved from ~350 to ~85, but SKP1, WD45, RACK1, and other non-E3 propeller proteins now rank in the top 20.
+
+### Lesson
+
+Fold-specific features create fold-family shortcuts. A model that learns "propeller-like → high score" cannot discriminate covalently-ligandable propeller E3s from the broad WD40 family. Fold-specificity requires residue-level cysteine reactivity modeling, not family-level structural features.
+
+Code is preserved in `src/degradomap/propeller.py` for documentation.
+
+---
+
+## §7 — v5: Diversified covalent positive set + shortcut diagnosis
+
+**Pre-registered:** Yes (see docs/preregistrations/v5.md)
+
+### Motivation
+
+The v2 covalent training set (n=4) was structurally homogeneous: 3 small RING-type proteins (RNF4, RNF114, FEM1B) plus DCAF1. This homogeneity allowed v4 to find the fold-family shortcut. v5 expands to 6 verified covalent positives across 4 folds.
+
+### Positive set
+
+| Gene | Accession | Fold | Citation |
+|------|-----------|------|----------|
+| RNF4 | P78317 | RING | Ward et al. Cell Chem Biol 2019 |
+| RNF114 | Q9Y508 | RING | Spradlin et al. Nat Chem Biol 2019 |
+| DCAF1 | Q9Y4B6 | multi-domain | Multiple 2022–2024 |
+| DCAF11 | Q8TEB1 | WD40 propeller | Tin et al. BMCL 2024 |
+| RNF126 | Q9BV68 | RING | Lim et al. ACS Cent Sci 2024 |
+| FBXO22 | Q8NEZ5 | F-box/LRR | Nie et al. Nat Chem Biol 2024 |
+
+FEM1B (Q92545) and DCAF16 (Q9NXF7) excluded: missing DepMap features and structural disorder, respectively. All accessions verified by gene-symbol lookup at runtime.
+
+### Pre-registered tests
+
+| # | Test | Threshold | Result |
+|---|------|-----------|--------|
+| 1 (PRIMARY) | Median LOO percentile ≤ 25% | Median ≤ 25 | **FAIL** — median ~62% |
+| 2 (SECONDARY) | Multi-domain Spearman ρ > 0.15, p < 0.05 | Both conditions | **FAIL** — ρ = 0.11, p = 0.18 |
+| 3 (TERTIARY) | DCAF1 structural-only LOO ≤ 50% | Percentile ≤ 50 | **PARTIAL PASS** — percentile = 48 |
+| 4 (QUATERNARY) | Structural top-15 contains ≥ 10 confirmed E3s | Count ≥ 10 | **FAIL** — 7 confirmed E3s, 5 UPS scaffold proteins |
+
+### Shortcut diagnosis
+
+Ablation experiment (full model vs structural-only model):
+
+| Gene | Full model %ile | Structural-only %ile | Δ |
+|------|----------------|---------------------|---|
+| RNF4 | 8 | 34 | -26 |
+| RNF114 | 12 | 41 | -29 |
+| DCAF1 | 48 | 48 | 0 |
+| DCAF11 | 71 | 58 | +13 |
+| RNF126 | 65 | 55 | +10 |
+| FBXO22 | 82 | 69 | +13 |
+
+Biological features help RING-type positives (which are essential and broadly expressed) but hurt newer covalent positives (which are non-essential and narrowly expressed). This is the UPS-pathway shortcut: the model learns "essential + broadly expressed = UPS core member = positive" rather than "structurally covalent-reactive = positive."
+
+### Structural top-15 audit
+
+Manual review of top-15 structural-only predictions: 7 confirmed E3 ligases (in addition to training positives), 5 UPS scaffold proteins (SKP1, ELOB, DDB1, CUL5, RBBP7), 3 non-ubiquitin proteins (HDAC8, SETD7, PRMT5). The scaffold proteins appear due to AlphaFold structural similarity to RING-type folds, not because of covalent ligandability.
+
+### Conclusion
+
+Public-data features (structural + DepMap) cannot solve the covalent PROTAC E3 discrimination problem. The next step requires warhead-side data: CysDB cysteine reactivity scores, competitive ABPP datasets, or AlphaFold-predicted cysteine accessibility + electrophilicity proxies.

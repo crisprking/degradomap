@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "degradomap"
-version = "0.1.0"
+version = "0.5.0"
 description = "Empirical evaluation of public-data features for predicting PROTAC E3 ligase tractability"
 readme = "README.md"
 requires-python = ">=3.10"

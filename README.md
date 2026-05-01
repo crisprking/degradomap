@@ -1,94 +1,88 @@
 # degradomap
 
-**Empirical evaluation of public-data features for predicting PROTAC E3 ligase tractability.**
+**Empirical evaluation of public-data features for predicting PROTAC E3 ligase tractability — a living null result.**
 
-> **TL;DR.** We tested whether AlphaFold-derived structural druggability features,
-> DepMap CRISPR essentiality, and cell-line expression breadth can discriminate
-> the 12 published PROTAC E3 ligases from 814 other human E3 candidates.
-> They cannot. Best leave-one-out cross-validated AUC was 0.587 (biological
-> features alone); combining with structural features did not improve performance.
-> Top-ranked predictions were dominated by core ubiquitin-pathway machinery
-> (SKP1, ELOB, DDB1, E2 conjugating enzymes), not novel PROTAC E3 candidates.
+Five pre-registered experiments. Five failures. Documented honestly.
+
+> **TL;DR (v5).** Biological features (DepMap essentiality + expression) dominate our
+> classifier and create a UPS-pathway shortcut: the model learns "essential + broadly expressed"
+> rather than "covalently ligandable." Structural features alone perform barely better than chance
+> (LOO AUC ~0.55). None of our four pre-registered v5 tests passed. The covalent PROTAC E3
+> problem remains unsolved by public-data features.
 >
-> See [docs/methods.md](docs/methods.md) for the full methods note.
+> See [docs/methods.md](docs/methods.md) for the full methods note and version-by-version results.
 
-## What this is
+## Version history
 
-A reproducible pipeline that:
+| Version | Question | Pre-registered | Result |
+|---------|----------|----------------|--------|
+| v1 | Can AlphaFold structural features + DepMap data discriminate PROTAC E3s from the human E3 universe? | No (retrospective) | Null. Best LOO AUC 0.587 (bio features only). |
+| v2 | Does mechanism-stratified analysis (pocket/glue/covalent) rescue signal? | Yes | Null. All three sub-experiments fail independently. |
+| v3 | Does held-out external validation on 5 post-2024 E3s confirm null? | Yes | Confirmed null. 3/5 held-out E3s rank below median. |
+| v4 | Do propeller-fold features (DCAF11 structural homologs) add signal? | Yes | Catastrophic failure. WD40 propeller fold shortcut. |
+| v5 | With a diversified covalent positive set (6 proteins, 4 folds), does anything work? | Yes | Null + UPS-pathway shortcut diagnosed. 1/4 tests passed. |
 
-1. Builds a curated list of human E3 ligase candidates from UniProt (~870 proteins),
-   with 12–13 published PROTAC E3 ligases verified by gene-symbol lookup
-2. Downloads AlphaFold-predicted structures for each
-3. Computes 10 structural druggability features (compactness, hydrophobic surface
-   patches, pocket-like residue clusters, AlphaFold pLDDT-weighted)
-4. Pulls DepMap CRISPR gene-effect (Chronos) and expression (TPM) data for the
-   current public release
-5. Joins everything into a per-gene feature matrix and runs the discrimination
-   experiment with leave-one-out CV
+## What this repo is
 
-## What this is not
+A reproducible, version-controlled record of a systematic null result in computational target identification for targeted protein degradation. Includes:
 
-A working PROTAC E3 predictor. The result is a null finding, reported honestly.
-This repository is most useful as:
+- Full pipeline (UniProt → AlphaFold → DepMap → feature matrix → LOO classifier)
+- Pre-registration documents for v2–v5 ([docs/preregistrations/](docs/preregistrations/))
+- Version-by-version data files in [data/](data/)
+- Source modules for each analytical approach, including v4 (documented failure)
 
-- A reference implementation of the relevant data integrations (UniProt to AlphaFold
-  to DepMap to unified per-gene feature matrix)
-- A documented null result that other groups can build on without repeating the work
-- A cautionary example of why structural features alone are insufficient for this
-  question
+## What this repo is not
+
+A working PROTAC E3 predictor. This is the honest baseline that shows why naive public-data approaches fail and what the next step actually requires.
 
 ## Install
 
-Tested with Python 3.10 to 3.12. Requires ~1 GB of disk for AlphaFold structures
-and DepMap matrices.
+Tested with Python 3.10–3.12.
 
-    git clone https://github.com/crisprking/degradomap.git
-    cd degradomap
-    pip install -e .
+```bash
+git clone https://github.com/crisprking/degradomap.git
+cd degradomap
+pip install -e .
+```
 
 ## Run the pipeline
 
-    degradomap run --output-dir ./degradomap_run
+```bash
+degradomap run --output-dir ./degradomap_run
+```
 
-This will (in order): query UniProt, download AlphaFold structures, compute
-structural features, pull DepMap data, build the merged feature matrix, and
-run the discrimination experiment. Total runtime ~30 minutes on a single core.
+Queries UniProt, downloads AlphaFold structures, computes features, pulls DepMap data, runs the discrimination experiment. ~30 min on a single core.
 
-## Data files included
+## Data files
 
-The data/ directory contains analysis-ready summary tables, all small (<1 MB):
+| File | Description |
+|------|-------------|
+| `data/e3_ligases_verified.csv` | Human E3 candidates with PROTAC positives flagged |
+| `data/features.csv` | Structural druggability features per protein |
+| `data/merged_dataset.csv` | v1 unified feature matrix |
+| `data/per_mechanism_summary.csv` | v2 mechanism-split results |
+| `data/external_validation_results.csv` | v3 held-out E3 scores |
+| `data/propeller_features.csv` | v4 propeller fold features (failed approach) |
+| `data/v5_loo_coherence_results.csv` | v5 LOO by covalent positive |
+| `data/v5_ablation_loo.csv` | v5 full vs structural-only ablation |
+| `data/v5_structural_top15_audit.csv` | v5 manual audit of structural top-15 |
 
-- e3_ligases_verified.csv: curated E3 ligase candidates with PROTAC positives flagged
-- features.csv: structural features per protein
-- e3_essentiality.csv: DepMap CRISPR essentiality summaries
-- e3_expression.csv: DepMap expression breadth summaries
-- merged_dataset.csv: all features merged for the experiment
+## Key failure modes diagnosed
 
-Raw AlphaFold structures and full DepMap matrices are not included (regenerable
-from the pipeline; ~1.5 GB combined).
-
-## Key result
-
-See figures/experiment_result.png. The 12 PROTAC-validated E3s split into two
-groups: about half rank in the top 300 (CRBN, MDM2, VHL, BIRC2, DCAF15, XIAP),
-the other half rank below 500 (DCAF1, RNF4, RNF114, KEAP1, BIRC3, FEM1B). This
-bimodality reflects the heterogeneity of the PROTAC E3 positive set: substrate
-adapters versus direct E3 ligases, essential versus non-essential, broadly
-versus narrowly expressed.
+1. **UPS-pathway shortcut** — DepMap essentiality/expression features correlate with UPS membership, not covalent ligandability. The classifier learns the shortcut.
+2. **Fold-family shortcut** — propeller structural features (v4) caused the model to over-rank all WD40 propeller proteins regardless of covalent site chemistry.
+3. **Positive set sparsity** — 6 verified covalent positives out of ~870 candidates is too sparse for tabular feature generalization.
 
 ## Citation
 
-Trueba, A. (2026). degradomap: empirical evaluation of public-data features
-for predicting PROTAC E3 ligase tractability.
-https://github.com/crisprking/degradomap
+Trueba, A. (2026). degradomap: empirical evaluation of public-data features for predicting PROTAC E3 ligase tractability. https://github.com/crisprking/degradomap
 
 ## License
 
-MIT. See LICENSE.
+MIT. See [LICENSE](LICENSE).
 
 ## About the author
 
-Abraham Trueba (UC Berkeley). I work on computational biology and drug discovery, with a focus on what public data can and cannot tell us about protein tractability for targeted protein degradation.
+Abraham Trueba (UC Berkeley). Computational biology and drug discovery, focused on what public data can and cannot tell us about protein tractability for targeted protein degradation.
 
-This work uses public data from UniProt, AlphaFold DB (EMBL-EBI), and DepMap
-(Broad Institute). Cite their primary publications when using their data.
+Uses public data from UniProt, AlphaFold DB (EMBL-EBI), and DepMap (Broad Institute). Cite their primary publications when using their data.
