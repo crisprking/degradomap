@@ -1,0 +1,16 @@
+gene,accession,is_e3,protein_name,reason
+DDA1,Q9BW61,False,DET1- and DDB1-associated protein 1,"UPS-pathway but not E3-specific: ['3D-structure', 'Acetylation', 'Phosphoprotein']"
+ANAPC15,P60006,False,Anaphase-promoting complex subunit 15,No E3 markers found
+DCAF10,Q5QP82,True,DDB1- and CUL4-associated factor 10,Name markers: ['WD repeat']
+RNF111,Q6ZNA4,True,E3 ubiquitin-protein ligase Arkadia,GO terms: {'GO:0061630'}; Name markers: ['RING-type']
+ANAPC13,Q9BS18,False,Anaphase-promoting complex subunit 13,"UPS-pathway but not E3-specific: ['3D-structure', 'Cell cycle', 'Cell division']"
+RNF169,Q8NCN4,True,E3 ubiquitin-protein ligase RNF169,"GO terms: {'GO:0004842', 'GO:0061630'}; Name markers: ['RING-type']"
+FBXL20,Q96IG2,True,F-box/LRR-repeat protein 20,GO terms: {'GO:0019005'}; Name markers: ['F-box']
+RNF208,Q9H0X6,True,RING finger protein 208,"GO terms: {'GO:0004842', 'GO:0061630'}"
+TOMM6,Q96B49,False,Mitochondrial import receptor subunit TOM6 homolog,Excluded: mitochondrial import in name
+SOCS7,O14512,False,Suppressor of cytokine signaling 7,"UPS-pathway but not E3-specific: ['Alternative splicing', 'Cell membrane', 'Cytoplasm']"
+SKP2,Q13309,True,S-phase kinase-associated protein 2,GO terms: {'GO:0019005'}; Name markers: ['F-box']
+FBXL2,Q9UKC9,True,F-box/LRR-repeat protein 2,GO terms: {'GO:0019005'}; Name markers: ['F-box']
+FBXL14,Q8N1E6,True,F-box/LRR-repeat protein 14,"GO terms: {'GO:0019005', 'GO:0004842'}; Name markers: ['F-box']"
+SPSB3,Q6PJ21,True,SPRY domain-containing SOCS box protein 3,GO terms: {'GO:0019005'}; Name markers: ['SOCS box']
+TNIP1,Q15025,False,TNFAIP3-interacting protein 1,No E3 markers found
