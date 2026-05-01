@@ -7,7 +7,7 @@ Five pre-registered experiments. Five failures. Documented honestly.
 > **TL;DR (v5).** Biological features (DepMap essentiality + expression) dominate our
 > classifier and create a UPS-pathway shortcut: the model learns "essential + broadly expressed"
 > rather than "covalently ligandable." Structural features alone perform barely better than chance
-> (LOO AUC ~0.55). None of our four pre-registered v5 tests passed. The covalent PROTAC E3
+> (LOO AUC ~0.55). Three of four pre-registered v5 tests failed; one partial pass (quaternary). The covalent PROTAC E3
 > problem remains unsolved by public-data features.
 >
 > See [docs/methods.md](docs/methods.md) for the full methods note and version-by-version results.
@@ -20,7 +20,7 @@ Five pre-registered experiments. Five failures. Documented honestly.
 | v2 | Does mechanism-stratified analysis (pocket/glue/covalent) rescue signal? | Yes | Null. All three sub-experiments fail independently. |
 | v3 | Does held-out external validation on 5 post-2024 E3s confirm null? | Yes | Confirmed null. 3/5 held-out E3s rank below median. |
 | v4 | Do propeller-fold features (DCAF11 structural homologs) add signal? | Yes | Catastrophic failure. WD40 propeller fold shortcut. |
-| v5 | With a diversified covalent positive set (6 proteins, 4 folds), does anything work? | Yes | Null + UPS-pathway shortcut diagnosed. 1/4 tests passed. |
+| v5 | With a diversified covalent positive set (6 proteins, 4 folds), does anything work? | Yes | Null + UPS-pathway shortcut diagnosed. 3 fails, 1 partial (quaternary: 9/15 E3s). |
 
 ## What this repo is
 

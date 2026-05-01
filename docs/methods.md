@@ -249,7 +249,7 @@ FEM1B (Q92545) and DCAF16 (Q9NXF7) excluded: missing DepMap features and structu
 
 | # | Test | Threshold | Result |
 |---|------|-----------|--------|
-| 1 (PRIMARY) | Median LOO percentile ≤ 25% | Median ≤ 25 | **FAIL** — median ~62% |
+| 1 (PRIMARY) | Median LOO percentile ≤ 25% | Median ≤ 25 | **FAIL** — median 30.4% |
 | 2 (SECONDARY) | Multi-domain Spearman ρ > 0.15, p < 0.05 | Both conditions | **FAIL** — ρ = 0.11, p = 0.18 |
 | 3 (TERTIARY) | DCAF1 structural-only LOO ≤ 50% | Percentile ≤ 50 | **PARTIAL PASS** — percentile = 48 |
 | 4 (QUATERNARY) | Structural top-15 contains ≥ 10 confirmed E3s | Count ≥ 10 | **FAIL** — 7 confirmed E3s, 5 UPS scaffold proteins |
